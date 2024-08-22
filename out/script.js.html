@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: script.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: script.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Array containing paths to product image thumbnails.
+ * @type {string[]}
+ */
+const secondImages = [
+    "images/image-product-1-thumbnail.jpg",
+    "images/image-product-2-thumbnail.jpg",
+    "images/image-product-3-thumbnail.jpg",
+    "images/image-product-4-thumbnail.jpg"
+];
+
+
+/**
+ * Initializes the application by setting up various components and functionalities.
+ * 
+ * This function performs the following actions:
+ * 1. Loads secondary images by calling `chargeImage(secondImages)`.
+ * 2. Switches the displayed image using `switchImg()`.
+ * 3. Adds data to the local storage with `addLocaleStorage()`.
+ * 4. Sets up the decrement functionality via `decrement()`.
+ * 5. Sets up the increment functionality via `increment()`.
+ * 6. Prepares the purchase modal with `buyModal()`.
+ * 7. Enables the functionality to open modal images using `openModalImg()`.
+ */
+function init() {
+    chargeImage(secondImages);
+    switchImg();
+    addLocaleStorage();
+    decrement();
+    increment();
+    buyModal();
+    openModalImg();
+}
+init();
+
+
+/**
+ * Function that loads images and appends them to the DOM.
+ */
+function switchImg() {
+    const articleShoes = document.querySelector('#shoes')
+    let count = 1
+    let imageDefault = `images/image-product-${count}.jpg`
+    let baliseImg = `
+    &lt;a href="#">&lt;img class="mainImg" src="${imageDefault}" alt="">&lt;/a>
+    `
+    articleShoes.insertAdjacentHTML('afterbegin', baliseImg)
+
+    //Add border in first img
+    const imageBorderDefault = document.querySelector("#choiceShoes figure img")
+    imageBorderDefault.classList.add("focusImg")
+
+    const imageThumbnails = document.querySelectorAll("#choiceShoes figure img");
+    imageThumbnails.forEach((img) => {
+        img.addEventListener('click', (e) => {
+            e.preventDefault()
+            imageThumbnails.forEach(imageThumbnail => {
+                imageThumbnail.classList.remove('focusImg')
+            });
+            count = img.dataset.index
+            img.classList.add('focusImg')
+            const imageChange = document.querySelector(".mainImg")
+            let imagePath = `images/image-product-${count}.jpg`
+            imageChange.src = imagePath
+        });
+    });
+}
+/**
+ * Function that loads images and appends them to the DOM.
+ * 
+ * @param {Array.&lt;string>} secondImages - Array of image paths to load.
+ */
+function chargeImage(secondImages){
+    secondImages.forEach((el, index) => {
+        const choiceShoes = document.querySelector("#choiceShoes");
+        choiceShoes.insertAdjacentHTML('beforeend', 
+        `
+        &lt;figure>&lt;img src="${el}" data-index=${index + 1} alt="">&lt;/figure>
+        `
+        )
+    });
+}
+
+/**
+ * Sets up an event listener on the main image to open a modal dialog when clicked.
+ *
+ * The function performs the following actions when the main image is clicked:
+ * 1. Prevents the default action of the click event.
+ * 2. Creates and inserts a modal dialog HTML structure into the document body.
+ * 3. Displays the modal dialog.
+ * 4. Calls various functions to handle closing the modal, adding secondary images,
+ *    switching the modal image, switching focus, and navigating through images.
+ */
+function openModalImg() {
+    const mainImg = document.querySelector('.mainImg');
+    mainImg.addEventListener('click', (e) => {
+        e.preventDefault();
+        const modal = `
+        &lt;dialog id="dialogImg">
+            &lt;div id="headerModal">&lt;img id="closeImg" src="images/icon-close.svg" alt="Close icon">&lt;/div>
+            &lt;div>
+                &lt;img class="previous" src="images/icon-previous.svg" alt="Previous icon">
+                &lt;img id="modalImgPrimary" src="${mainImg.src}" alt="Primary modal image">
+                &lt;img class="next" src="images/icon-next.svg" alt="Next icon">
+            &lt;/div>
+        &lt;/dialog>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modal);
+        const dialogImg = document.querySelector('#dialogImg');
+        dialogImg.showModal();
+        closeModal();
+        addSecondaryImage();
+        switchImgModal();
+        switchFocusImg(); 
+        previousImg();
+        nextImg();
+    });
+}
+
+
+/**
+ * Adds secondary images to the modal dialog.
+ *
+ * This function performs the following actions:
+ * 1. Selects the modal dialog element.
+ * 2. Checks if a container for secondary images (`#secondaryChoice`) already exists.
+ *    - If it does not exist, it creates and inserts the container into the modal dialog.
+ * 3. Clears any existing secondary images from the container.
+ * 4. Iterates over the `secondImages` array and adds each image to the container as a `&lt;figure>` element.
+ */
+function addSecondaryImage() {
+    const dialogImg = document.querySelector('#dialogImg');
+    
+    // Check if #secondaryChoice already exists
+    let divSecondary = dialogImg.querySelector('#secondaryChoice');
+    if (!divSecondary) {
+        dialogImg.insertAdjacentHTML('beforeend', `
+        &lt;div id="secondaryChoice">&lt;/div>
+        `);
+        divSecondary = dialogImg.querySelector('#secondaryChoice');
+    }
+
+    // Clear existing secondary images before adding new ones
+    const existingFigures = divSecondary.querySelectorAll('figure');
+    existingFigures.forEach(fig => fig.remove());
+    
+    // Add each secondary image to the container
+    secondImages.forEach((el, index) => {
+        divSecondary.insertAdjacentHTML('beforeend', 
+        `
+        &lt;figure>&lt;img src="${el}" data-index=${index + 1} alt="">&lt;/figure>
+        `
+        );
+    });
+}
+
+
+/**
+ * Sets up an event listener to close the modal dialog when the close icon is clicked.
+ *
+ * This function performs the following actions:
+ * 1. Selects the close icon element (`#closeImg`).
+ * 2. Adds a click event listener to the close icon.
+ *    - Prevents the default action of the click event.
+ *    - Selects the modal dialog element (`#dialogImg`).
+ *    - Closes the modal dialog.
+ *    - Removes the modal dialog from the DOM.
+ */
+function closeModal() {
+    const closeImg = document.querySelector('#closeImg');
+    closeImg.addEventListener('click', (e) => {
+        e.preventDefault();
+        const dialogImg = document.querySelector('#dialogImg');
+        dialogImg.close();
+        // Remove the modal from the DOM once closed
+        dialogImg.remove();
+    });
+}
+
+/**
+ * Sets up the initial focus on the first secondary image in the modal and updates the focus
+ * when any secondary image is clicked.
+ *
+ * This function performs the following actions:
+ * 1. Selects the first secondary image in the modal and adds the `focusImg` class to it.
+ * 2. Selects all secondary images in the modal (`#secondaryChoice figure img`).
+ * 3. Adds a click event listener to each secondary image.
+ *    - Prevents the default action of the click event.
+ *    - Removes the `focusImg` class from all secondary images.
+ *    - Adds the `focusImg` class to the clicked secondary image.
+ */
+function switchFocusImg() {
+    const firstImg = document.querySelector('#secondaryChoice figure img');
+    firstImg.classList.add('focusImg');
+    const secondaryImg = document.querySelectorAll('#secondaryChoice figure img');
+    secondaryImg.forEach((img) => {
+        img.addEventListener('click', (e) => {
+            e.preventDefault();
+            secondaryImg.forEach(imageThumbnail => {
+                imageThumbnail.classList.remove('focusImg');
+            });
+            img.classList.add('focusImg');
+        });
+    });
+}
+
+/**
+ * Sets up an event listener on the "previous" button to switch the main modal image to the previous image.
+ *
+ * This function performs the following actions:
+ * 1. Selects the "previous" button element (`.previous`).
+ * 2. Adds a click event listener to the "previous" button.
+ *    - Prevents the default action of the click event.
+ *    - Selects the main image in the modal (`#modalImgPrimary`).
+ *    - Extracts the current image index from the `src` attribute of the main image.
+ *    - Decrements the index, wrapping around to the last image if necessary.
+ *    - Updates the `src` attribute of the main image to the previous image.
+ *    - Removes the `focusImg` class from all secondary images.
+ *    - Adds the `focusImg` class to the new focused secondary image.
+ */
+function previousImg() {
+    const previous = document.querySelector('.previous');
+    previous.addEventListener('click', (e) => {
+        e.preventDefault();
+        const mainImg = document.querySelector('#modalImgPrimary');
+        let index = mainImg.src.slice(-5, -4);
+        if (index == 1) {
+            index = 5;
+        }
+        index--;
+        mainImg.src = `images/image-product-${index}.jpg`;
+        const secondaryImg = document.querySelectorAll('#secondaryChoice figure img');
+        secondaryImg.forEach(imageThumbnail => {
+            imageThumbnail.classList.remove('focusImg');
+        });
+        secondaryImg[index - 1].classList.add('focusImg');
+    });
+}
+
+
+/**
+ * Sets up an event listener on the "next" button to switch the main modal image to the next image.
+ *
+ * This function performs the following actions:
+ * 1. Selects the "next" button element (`.next`).
+ * 2. Adds a click event listener to the "next" button.
+ *    - Prevents the default action of the click event.
+ *    - Selects the main image in the modal (`#modalImgPrimary`).
+ *    - Extracts the current image index from the `src` attribute of the main image.
+ *    - Increments the index, wrapping around to the first image if necessary.
+ *    - Updates the `src` attribute of the main image to the next image.
+ *    - Removes the `focusImg` class from all secondary images.
+ *    - Adds the `focusImg` class to the new focused secondary image.
+ */
+function nextImg() {
+    const next = document.querySelector('.next');
+    next.addEventListener('click', (e) => {
+        e.preventDefault();
+        const mainImg = document.querySelector('#modalImgPrimary');
+        let index = mainImg.src.slice(-5, -4);
+        if (index == 4) {
+            index = 0;
+        }
+        index++;
+        mainImg.src = `images/image-product-${index}.jpg`;
+        const secondaryImg = document.querySelectorAll('#secondaryChoice figure img');
+        secondaryImg.forEach(imageThumbnail => {
+            imageThumbnail.classList.remove('focusImg');
+        });
+        secondaryImg[index - 1].classList.add('focusImg');
+    });
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addSecondaryImage">addSecondaryImage</a></li><li><a href="global.html#chargeImage">chargeImage</a></li><li><a href="global.html#closeModal">closeModal</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#nextImg">nextImg</a></li><li><a href="global.html#openModalImg">openModalImg</a></li><li><a href="global.html#previousImg">previousImg</a></li><li><a href="global.html#secondImages">secondImages</a></li><li><a href="global.html#switchFocusImg">switchFocusImg</a></li><li><a href="global.html#switchImg">switchImg</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Thu Jul 11 2024 15:46:21 GMT+0200 (heure d’été d’Europe centrale)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

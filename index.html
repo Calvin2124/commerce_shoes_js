@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- displays site properly based on user's device -->
+
+  <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
+  <link rel="stylesheet" href="css/style.css">
+  
+  
+  <title>Frontend Mentor | E-commerce product page</title>
+
+  <!-- Feel free to remove these styles or customise in your own stylesheet 👍 -->
+  <style>
+    .attribution { font-size: 11px; text-align: center; }
+    .attribution a { color: hsl(228, 45%, 44%); }
+  </style>
+</head>
+  <body>
+  <header>
+    <div class="container1440">
+      <div>
+        <a href="#"><img src="images/logo.svg" alt="logo"></a>
+        <nav>
+          <ul>
+            <li><a href="#">Collections</a></li>
+            <li><a href="#">Men</a></li>
+            <li><a href="#">Women</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="cart">
+        <a class="buyModal" href="#"><img src="images/icon-cart.svg" alt="cart"></a>
+        <a href="#"><img src="images/image-avatar.png" alt=""></a>
+      </div>
+    </div>
+  </header>
+  <main>
+    <section id="sectionArticle">
+      <div class="container1140">
+        <article id="shoes">
+          
+          <div id="choiceShoes">
+          </div>
+        </article>
+        <article id="description">
+          <p>Sneakers Company</p>
+          <h1>Fall Limited Edition Sneakers</h1>
+          <p>These low-profile sneakers are your perfect casual wear companion. Featuring a 
+            durable rubber outer sole, they’ll withstand everything the weather can offer.</p>
+            <div id="price">
+              <p>$<span class="price">125.00</span> </p>
+              <p class="pourcentage">50%</p>
+            </div>
+            <p>$250.00</p>
+            <div id="buy">
+              <div>
+                <button id="buttonLeft">-</button><input type="text" name="userQuantity" id="userQuantity" min="1" value="1"><button id="buttonRight">+</button>
+              </div>
+              <a href="#" class="btnOrange"><span><img src="images/icon-cart.svg" alt=""></span>Add to cart</a>
+            </div>
+        </article>
+      </div>
+    </section>
+  </main>
+  <footer class="attribution">
+    Challenge by <a href="https://www.frontendmentor.io?ref=challenge" target="_blank">Frontend Mentor</a>. 
+    Coded by <a href="#">Your Name Here</a>.
+  </footer>
+  <script src="script/cart.js"></script>
+  <script src="script/script.js"></script>
+</body>
+</html>
